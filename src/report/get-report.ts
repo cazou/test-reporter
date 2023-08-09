@@ -5,7 +5,7 @@ import {DEFAULT_LOCALE} from '../utils/node-utils'
 import {getFirstNonEmptyLine} from '../utils/parse-utils'
 import {slug} from '../utils/slugger'
 
-const MAX_REPORT_LENGTH = 65535
+const MAX_REPORT_LENGTH = 655350
 
 export interface ReportOptions {
   listSuites: 'all' | 'failed'
@@ -22,18 +22,23 @@ const defaultOptions: ReportOptions = {
 }
 
 export function getReport(results: TestRunResult[], options: ReportOptions = defaultOptions): string {
-  core.info('Generating check run summary')
+  core.info('Generating check run summary -- testing')
 
   applySort(results)
 
+  core.info('Generating check run summary1')
   const opts = {...options}
+  core.info('Generating check run summary2')
   let lines = renderReport(results, opts)
+  core.info('Generating check run summary3')
   let report = lines.join('\n')
+  core.info('Generating check run summary4')
 
   if (getByteLength(report) <= MAX_REPORT_LENGTH) {
     return report
   }
 
+  core.info('Generating check run summary5')
   if (opts.listTests === 'all') {
     core.info("Test report summary is too big - setting 'listTests' to 'failed'")
     opts.listTests = 'failed'
@@ -80,8 +85,11 @@ function trimReport(lines: string[]): string {
 }
 
 function applySort(results: TestRunResult[]): void {
+  core.info('applySort1')
   results.sort((a, b) => a.path.localeCompare(b.path, DEFAULT_LOCALE))
+  core.info('applySort2')
   for (const res of results) {
+    core.info('applySort3')
     res.suites.sort((a, b) => a.name.localeCompare(b.name, DEFAULT_LOCALE))
   }
 }
@@ -234,14 +242,14 @@ function getTestsReport(ts: TestSuiteResult, runIndex: number, suiteIndex: numbe
     for (const tc of grp.tests) {
       const result = getResultIcon(tc.result)
       sections.push(`${space}${result} ${tc.name}`)
-      if (tc.error) {
+      /*if (tc.error) {
         const lines = (tc.error.message ?? getFirstNonEmptyLine(tc.error.details)?.trim())
           ?.split(/\r?\n/g)
           .map(l => '\t' + l)
         if (lines) {
           sections.push(...lines)
         }
-      }
+      }*/
     }
   }
   sections.push('```')
